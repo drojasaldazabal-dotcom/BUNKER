@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búnker de Hierro V2.1 - Control de Riesgo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f1f5f9; overflow-x: hidden; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(51, 65, 85, 0.5); }
+        .card-glow { transition: all 0.3s ease; border: 1px solid #1e293b; }
+        .card-glow:hover { border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.1); }
+        .progress-bar { height: 10px; background: #1e293b; border-radius: 99px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        input { background: #0f172a !important; border: 1px solid #334155 !important; color: white !important; transition: all 0.2s; }
+        input:focus { border-color: #3b82f6 !important; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .status-win { color: #4ade80; background: rgba(74, 222, 128, 0.1); }
+        .status-loss { color: #f87171; background: rgba(248, 113, 113, 0.1); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-8">
+        
+        <!-- HEADER OPERATIVO -->
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 animate-fade-in">
+            <div>
+                <h1 class="text-4xl font-black tracking-tighter flex items-center gap-3">
+                    <i data-lucide="shield-check" class="w-10 h-10 text-blue-500"></i>
+                    BÚNKER DE HIERRO <span class="text-blue-500 text-sm bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20">V2.1</span>
+                </h1>
+                <p class="text-slate-400 mt-2 uppercase text-[10px] tracking-[0.3em] font-bold">Inversión Racional • Objetivo S/ 1,000</p>
+            </div>
+            
+            <div class="glass p-6 rounded-2xl flex flex-col gap-4 min-w-full md:min-w-[400px] shadow-2xl">
+                <div class="flex justify-between items-center text-[10px] font-black uppercase text-slate-400">
+                    <span class="flex items-center gap-1"><i data-lucide="target" class="w-3 h-3"></i> Progreso Mensual</span>
+                    <span id="goal-percent" class="text-blue-400 text-base font-mono">0%</span>
+                </div>
+                <div class="progress-bar"><div id="goal-progress" class="progress-fill" style="width: 0%"></div></div>
+                <div class="flex justify-between items-end">
+                    <div>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase mb-0.5">Utilidad Lograda</p>
+                        <p id="profit-label" class="text-lg font-mono font-bold text-slate-200">S/ 0.00 / S/ 1,000</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[9px] text-blue-500 font-bold uppercase mb-0.5">Saldo Operativo</p>
+                        <p id="current-balance-top" class="text-2xl font-black text-blue-400 font-mono tracking-tighter">S/ 50.00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD DE MÉTRICAS -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass p-5 rounded-2xl card-glow">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-500 text-[10px] font-black uppercase tracking-wider">Beneficio</span>
+                    <div class="p-2 bg-green-500/10 rounded-lg"><i data-lucide="trending-up" class="w-4 h-4 text-green-400"></i></div>
+                </div>
+                <p id="total-profit" class="text-2xl font-bold text-green-400 font-mono">S/ 0.00</p>
+            </div>
+            <div class="glass p-5 rounded-2xl card-glow">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-500 text-[10px] font-black uppercase tracking-wider">Fase</span>
+                    <div class="p-2 bg-blue-500/10 rounded-lg"><i data-lucide="layers" class="w-4 h-4 text-blue-400"></i></div>
+                </div>
+                <p id="current-phase" class="text-2xl font-bold text-blue-400">FASE 1</p>
+            </div>
+            <div class="glass p-5 rounded-2xl card-glow">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-500 text-[10px] font-black uppercase tracking-wider">Efectividad</span>
+                    <div class="p-2 bg-amber-500/10 rounded-lg"><i data-lucide="zap" class="w-4 h-4 text-amber-400"></i></div>
+                </div>
+                <p id="win-rate" class="text-2xl font-bold text-amber-400 font-mono">0%</p>
+            </div>
+            <div class="glass p-5 rounded-2xl card-glow">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-slate-500 text-[10px] font-black uppercase tracking-wider">ROI Real</span>
+                    <div class="p-2 bg-slate-500/10 rounded-lg"><i data-lucide="activity" class="w-4 h-4 text-slate-400"></i></div>
+                </div>
+                <p id="roi-display" class="text-2xl font-bold font-mono">0.00%</p>
+            </div>
+        </div>
+
+        <!-- SECCIÓN DE OPERACIONES -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1 space-y-6">
+                <div class="glass p-6 rounded-2xl shadow-xl border-t-2 border-t-blue-500">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-5 h-5 text-blue-500"></i>
+                        Registrar Misión
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] text-slate-500 mb-1.5 uppercase font-black tracking-widest">Evento / Selección</label>
+                            <input type="text" id="bet-event" placeholder="Ej. PSG vs Bayern - BTTS" class="w-full p-3 rounded-xl border border-slate-700 bg-slate-900/50">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] text-blue-500 mb-1.5 uppercase font-black tracking-widest">Inversión (S/)</label>
+                                <input type="number" id="bet-stake" value="2.50" step="0.5" class="w-full p-3 rounded-xl">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-500 mb-1.5 uppercase font-black tracking-widest">Cuota</label>
+                                <input type="number" id="bet-odds" value="1.50" step="0.05" class="w-full p-3 rounded-xl">
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                            <p id="stake-advice" class="text-[10px] text-slate-400 italic leading-relaxed text-center">Calculando riesgo...</p>
+                        </div>
+                        <button onclick="addBet()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-blue-900/20 transition-all">
+                            Fijar Objetivo
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass p-6 rounded-2xl bg-slate-900/20">
+                    <h4 class="font-black text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-4 flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-4 h-4 text-blue-500"></i>
+                        Doctrina SIRBET
+                    </h4>
+                    <div id="phase-info" class="space-y-3">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLA DE HISTORIAL -->
+            <div class="lg:col-span-2">
+                <div class="glass rounded-2xl overflow-hidden shadow-2xl flex flex-col h-full">
+                    <div class="p-5 border-b border-slate-700 flex justify-between items-center bg-slate-800/20">
+                        <h3 class="font-black uppercase text-[11px] tracking-[0.3em] text-blue-400">Libro de Operaciones Tácticas</h3>
+                        <button onclick="showResetModal()" class="text-[10px] font-black text-slate-500 hover:text-red-400 transition-all flex items-center gap-2 uppercase group">
+                            <i data-lucide="trash-2" class="w-3 h-3 group-hover:rotate-12"></i> Formatear Búnker
+                        </button>
+                    </div>
+                    
+                    <div class="flex-grow overflow-auto max-h-[600px]">
+                        <table class="w-full text-left">
+                            <thead class="text-[10px] text-slate-500 uppercase tracking-widest border-b border-slate-800 bg-slate-950/50 sticky top-0 z-10">
+                                <tr>
+                                    <th class="p-5">Misión</th>
+                                    <th class="p-5 text-center">Inversión</th>
+                                    <th class="p-5 text-center">Cuota</th>
+                                    <th class="p-5 text-center">Estado</th>
+                                    <th class="p-5 text-right">Neto (S/)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bets-table-body" class="divide-y divide-slate-800/30">
+                                <!-- Filas dinámicas -->
+                            </tbody>
+                        </table>
+                        <div id="empty-state" class="flex flex-col items-center justify-center p-20 text-slate-700 hidden">
+                            <i data-lucide="radar" class="w-16 h-16 opacity-10 animate-pulse mb-4"></i>
+                            <p class="text-xs font-black uppercase tracking-widest">Sin misiones en el radar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE FORMATEO -->
+    <div id="reset-modal" class="custom-modal">
+        <div class="glass p-8 rounded-3xl max-w-md w-full mx-4 shadow-2xl border-2 border-red-500/20">
+            <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="alert-octagon" class="w-8 h-8 text-red-500"></i>
+            </div>
+            <h2 class="text-xl font-black text-center mb-2 uppercase tracking-tighter">¿Formatear Búnker?</h2>
+            <p class="text-slate-400 text-sm text-center mb-8">Esta acción destruirá todos los registros de misión de forma permanente. No hay vuelta atrás.</p>
+            <div class="flex gap-4">
+                <button onclick="closeResetModal()" class="flex-1 py-3 rounded-xl font-bold bg-slate-800 hover:bg-slate-700 transition-all text-sm">REPLEGARSE</button>
+                <button onclick="resetData()" class="flex-1 py-3 rounded-xl font-bold bg-red-600 hover:bg-red-500 transition-all text-sm shadow-lg shadow-red-900/20">PROCEDER</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICACIÓN TÁCTICA -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass border-blue-500/30 px-8 py-3 rounded-2xl shadow-2xl transform translate-y-32 opacity-0 transition-all duration-700 z-50 flex items-center gap-3">
+        <i data-lucide="bell" class="w-4 h-4 text-blue-400"></i>
+        <span id="toast-text" class="text-xs font-black uppercase tracking-widest text-blue-100"></span>
+    </div>
+
+    <script>
+        let bets = JSON.parse(localStorage.getItem('bunker_v2_1_github')) || [];
+        const initialBalance = 50.00;
+        const monthlyGoal = 1000.00;
+
+        function save() {
+            localStorage.setItem('bunker_v2_1_github', JSON.stringify(bets));
+        }
+
+        function updateUI() {
+            const tableBody = document.getElementById('bets-table-body');
+            const emptyState = document.getElementById('empty-state');
+            tableBody.innerHTML = '';
+            
+            if (bets.length === 0) emptyState.classList.remove('hidden');
+            else emptyState.classList.add('hidden');
+
+            let currentBal = initialBalance;
+            let totalProfit = 0;
+            let wins = 0;
+            let settledBets = 0;
+            let totalWagered = 0;
+
+            bets.forEach((bet, index) => {
+                let netResult = 0;
+                if (bet.status === 'win') {
+                    netResult = bet.stake * (bet.odds - 1);
+                    wins++;
+                    settledBets++;
+                } else if (bet.status === 'loss') {
+                    netResult = -bet.stake;
+                    settledBets++;
+                }
+
+                totalProfit += netResult;
+                totalWagered += (bet.status !== 'pending' ? bet.stake : 0);
+                currentBal += netResult;
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-blue-500/5 transition-colors group';
+                row.innerHTML = `
+                    <td class="p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-1.5 h-8 rounded-full ${bet.status === 'win' ? 'bg-green-500' : bet.status === 'loss' ? 'bg-red-500' : 'bg-slate-700'}"></div>
+                            <div>
+                                <p class="text-sm font-black text-slate-200">${bet.event}</p>
+                                <p class="text-[8px] text-slate-500 uppercase font-black mt-0.5 tracking-widest">OP-ID #${100 + index}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-5 text-center text-sm font-mono font-bold text-slate-400">S/ ${bet.stake.toFixed(2)}</td>
+                    <td class="p-5 text-center text-sm font-mono font-bold text-slate-400">x${bet.odds.toFixed(2)}</td>
+                    <td class="p-5 text-center">
+                        ${bet.status === 'pending' ? 
+                            `<div class="flex gap-2 justify-center">
+                                <button onclick="setResult(${index}, 'win')" class="px-3 py-1 bg-green-500/20 text-green-400 rounded-lg text-[9px] font-black border border-green-500/20 hover:bg-green-500 hover:text-white transition-all">WIN</button>
+                                <button onclick="setResult(${index}, 'loss')" class="px-3 py-1 bg-red-500/20 text-red-400 rounded-lg text-[9px] font-black border border-red-500/20 hover:bg-red-500 hover:text-white transition-all">LOSS</button>
+                            </div>` : 
+                            `<span class="px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-tighter ${bet.status === 'win' ? 'status-win' : 'status-loss'}">${bet.status === 'win' ? 'Impacto' : 'Baja'}</span>`
+                        }
+                    </td>
+                    <td class="p-5 text-right font-black text-sm font-mono ${netResult >= 0 ? 'text-green-400' : 'text-red-400'}">
+                        ${bet.status === 'pending' ? '<span class="text-slate-700">---</span>' : (netResult > 0 ? '+' : '') + netResult.toFixed(2)}
+                    </td>
+                `;
+                tableBody.prepend(row);
+            });
+
+            // DASHBOARD UPDATES
+            document.getElementById('current-balance-top').innerText = `S/ ${currentBal.toFixed(2)}`;
+            document.getElementById('total-profit').innerText = `S/ ${totalProfit.toFixed(2)}`;
+            document.getElementById('profit-label').innerText = `S/ ${Math.max(0, totalProfit).toFixed(2)} / S/ 1,000`;
+            
+            const progress = Math.min((Math.max(0, totalProfit) / monthlyGoal) * 100, 100).toFixed(1);
+            document.getElementById('goal-percent').innerText = `${progress}%`;
+            document.getElementById('goal-progress').style.width = `${progress}%`;
+            
+            const wr = settledBets > 0 ? Math.round((wins / settledBets) * 100) : 0;
+            document.getElementById('win-rate').innerText = `${wr}%`;
+            
+            const roi = totalWagered > 0 ? ((totalProfit / totalWagered) * 100).toFixed(2) : 0;
+            document.getElementById('roi-display').innerText = `${roi}%`;
+
+            // PHASE LOGIC
+            const phaseEl = document.getElementById('current-phase');
+            const phaseInfo = document.getElementById('phase-info');
+            const stakeAdv = document.getElementById('stake-advice');
+            
+            if (currentBal < 200) {
+                phaseEl.innerText = "FASE 1";
+                phaseEl.className = "text-2xl font-black text-blue-400 font-mono";
+                phaseInfo.innerHTML = `<div class="p-4 rounded-xl bg-blue-500/5 border border-blue-500/20"><p class="text-blue-400 font-black mb-2 uppercase tracking-tighter text-[9px]">RECLUTAMIENTO</p><p class="text-slate-400 text-[10px] leading-relaxed">Fuerzas básicas. Meta S/ 200. Riesgo máximo 5% por jugada.</p></div>`;
+                stakeAdv.innerText = `Protocolo sugerido: S/ ${(currentBal * 0.05).toFixed(2)} (5%)`;
+            } else if (currentBal < 600) {
+                phaseEl.innerText = "FASE 2";
+                phaseEl.className = "text-2xl font-black text-amber-400 font-mono";
+                phaseInfo.innerHTML = `<div class="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20"><p class="text-amber-400 font-black mb-2 uppercase tracking-tighter text-[9px]">CONSOLIDACIÓN</p><p class="text-slate-400 text-[10px] leading-relaxed">Crecimiento sostenido. Meta S/ 600. Riesgo máximo 7%.</p></div>`;
+                stakeAdv.innerText = `Protocolo sugerido: S/ ${(currentBal * 0.07).toFixed(2)} (7%)`;
+            } else {
+                phaseEl.innerText = "FASE 3";
+                phaseEl.className = "text-2xl font-black text-green-400 font-mono";
+                phaseInfo.innerHTML = `<div class="p-4 rounded-xl bg-green-500/5 border border-green-500/20"><p class="text-green-400 font-black mb-2 uppercase tracking-tighter text-[9px]">OPERACIÓN 1K</p><p class="text-slate-400 text-[10px] leading-relaxed">Velocidad de crucero. Meta diaria S/ 33.33 para el retiro.</p></div>`;
+                stakeAdv.innerText = `Protocolo: Cuota Diaria S/ 33.33`;
+            }
+            lucide.createIcons();
+        }
+
+        function addBet() {
+            const event = document.getElementById('bet-event').value.trim();
+            const stake = parseFloat(document.getElementById('bet-stake').value);
+            const odds = parseFloat(document.getElementById('bet-odds').value);
+
+            if (!event || isNaN(stake) || isNaN(odds) || stake <= 0) {
+                showToast("Faltan datos de inteligencia");
+                return;
+            }
+
+            bets.push({ event, stake, odds, status: 'pending' });
+            document.getElementById('bet-event').value = '';
+            save();
+            updateUI();
+            showToast("Objetivo fijado en el radar");
+        }
+
+        function setResult(index, status) {
+            bets[index].status = status;
+            save();
+            updateUI();
+            showToast(status === 'win' ? "Objetivo neutralizado. Sumamos." : "Baja en el frente. Reacondicionar.");
+        }
+
+        function showResetModal() { document.getElementById('reset-modal').classList.add('active-modal'); }
+        function closeResetModal() { document.getElementById('reset-modal').classList.remove('active-modal'); }
+        
+        function resetData() {
+            bets = [];
+            save();
+            updateUI();
+            closeResetModal();
+            showToast("Búnker formateado. Base restaurada.");
+        }
+
+        function showToast(text) {
+            const el = document.getElementById('toast');
+            document.getElementById('toast-text').innerText = text;
+            el.classList.remove('translate-y-32', 'opacity-0');
+            el.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                el.classList.add('translate-y-32', 'opacity-0');
+                el.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        window.onload = () => {
+            lucide.createIcons();
+            updateUI();
+        };
+    </script>
+</body>
+</html>
