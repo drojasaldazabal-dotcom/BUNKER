@@ -63,10 +63,10 @@
         .status-loss { color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; }
 
         .goal-lock-overlay {
-            position: absolute; inset: 0; background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(2px); z-index: 20; display: none;
+            position: absolute; inset: 0; background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px); z-index: 20; display: none;
             align-items: center; justify-content: center; text-align: center;
-            border-radius: 0.5rem;
+            border-radius: 0.5rem; border: 2px dashed #cbd5e1;
         }
         .active-lock { display: flex; }
     </style>
@@ -165,12 +165,13 @@
                         <p id="status-tag" class="text-base font-bold text-blue-600 uppercase">Operativo</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-[8px] font-black text-slate-400 uppercase mb-1 tracking-widest text-green-600">Restante Diario</p>
+                        <p id="daily-meta-label" class="text-[8px] font-black text-slate-400 uppercase mb-1 tracking-widest text-green-600">Restante Diario</p>
                         <p id="daily-meta" class="text-xl font-black text-green-600 font-mono">S/ 33.33</p>
                     </div>
                 </div>
             </div>
 
+            <!-- TABLA -->
             <div class="architect-card overflow-hidden">
                 <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
                     <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-500">Libro de Operaciones</h3>
@@ -197,10 +198,15 @@
         <aside class="col-span-12 lg:col-span-3">
             <div class="architect-card p-6 relative">
                 <div id="goal-lock" class="goal-lock-overlay">
-                    <div class="p-4">
-                        <i data-lucide="lock" class="mx-auto mb-2 text-slate-900"></i>
-                        <p class="text-xs font-black uppercase text-slate-900 leading-tight">Meta Diaria Alcanzada.<br>Búnker cerrado por seguridad.</p>
-                        <button onclick="unlockOrder()" class="mt-4 text-[9px] font-black text-blue-600 uppercase underline tracking-widest">Continuar Operando (Riesgo)</button>
+                    <div class="p-6">
+                        <div class="bg-blue-600 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <i data-lucide="lock" class="text-white w-6 h-6"></i>
+                        </div>
+                        <p class="text-sm font-black uppercase text-slate-900 leading-tight">Meta Alcanzada</p>
+                        <p class="text-[10px] text-slate-500 mt-2 font-medium">Búnker cerrado por seguridad operativa.</p>
+                        <button onclick="unlockOrder()" class="mt-6 w-full py-2 bg-slate-100 text-slate-900 text-[9px] font-black uppercase border border-slate-200 rounded hover:bg-slate-200 transition-all">
+                            Continuar (Sobre-operación)
+                        </button>
                     </div>
                 </div>
                 <h3 class="font-black text-xs uppercase tracking-widest mb-8 text-slate-900">Nueva Orden</h3>
@@ -267,6 +273,7 @@
                 totalProfit += net;
                 totalStake += (o.status !== 'pending' ? o.st : 0);
                 
+                // Solo sumar beneficio si la fecha coincide con hoy
                 if(o.date === todayStr) {
                     todayProfit += net;
                 }
@@ -292,15 +299,30 @@
 
             const currentBalance = capital + totalProfit;
             const targetDaily = monthlyGoal / 30;
-            const remainingDaily = Math.max(0, targetDaily - todayProfit);
-
+            
+            // Lógica de Meta Dinámica
+            let remainingDaily = Math.max(0, targetDaily - todayProfit);
+            const dailyLabel = document.getElementById('daily-meta-label');
+            
             document.getElementById('balance-main').innerText = `S/ ${currentBalance.toFixed(2)}`;
             document.getElementById('profit-main').innerText = `S/ ${totalProfit.toFixed(2)}`;
             document.getElementById('stat-total').innerText = orders.length;
             document.getElementById('stat-profit').innerText = `S/ ${totalProfit.toFixed(2)}`;
             document.getElementById('goal-label-ui').innerText = `Meta: S/ ${monthlyGoal.toLocaleString()}`;
             
-            // ACTUALIZACIÓN DINÁMICA DE META DIARIA
+            // ACTUALIZACIÓN DE META SI SE DESBLOQUEA
+            if (todayProfit >= targetDaily && forceUnlock) {
+                const bonusGoal = targetDaily * 2; // Meta x2 si decide seguir
+                remainingDaily = Math.max(0, bonusGoal - todayProfit);
+                dailyLabel.innerText = "META BONO (x2)";
+                dailyLabel.className = "text-[8px] font-black text-amber-600 uppercase mb-1 tracking-widest";
+                document.getElementById('daily-meta').className = "text-xl font-black text-amber-600 font-mono";
+            } else {
+                dailyLabel.innerText = "RESTANTE DIARIO";
+                dailyLabel.className = "text-[8px] font-black text-green-600 uppercase mb-1 tracking-widest";
+                document.getElementById('daily-meta').className = "text-xl font-black text-green-600 font-mono";
+            }
+            
             document.getElementById('daily-meta').innerText = `S/ ${remainingDaily.toFixed(2)}`;
             
             const perc = Math.max(0, Math.min((totalProfit / monthlyGoal) * 100, 100));
@@ -326,8 +348,10 @@
             // IA Mentor
             const mentor = document.getElementById('mentor-msg');
             const stakeAdv = (currentBalance * 0.05).toFixed(2);
-            if(todayProfit >= targetDaily) {
+            if(todayProfit >= targetDaily && !forceUnlock) {
                 mentor.innerText = `"General, hoy ya capturó S/ ${todayProfit.toFixed(2)}. Mi recomendación: Retirada estratégica. Mañana el mercado estará fresco."`;
+            } else if (forceUnlock) {
+                mentor.innerText = `"Atención: Entrando en Zona de Riesgo (Sobre-operación). Solo ejecute misiones con Asimetría Total."`;
             } else {
                 mentor.innerText = `"Fase de Crecimiento activa. Su inversión ideal ahora es S/ ${stakeAdv}. Quedan S/ ${remainingDaily.toFixed(2)} para cerrar el día."`;
             }
@@ -356,19 +380,30 @@
         }
 
         function res(i, s) { orders[i].status = s; save(); update(); notify(s === 'win' ? "OBJETIVO NEUTRALIZADO" : "BAJA RECIBIDA"); }
-        function unlockOrder() { forceUnlock = true; update(); notify("BÚNKER DESBLOQUEADO - PROCEDA CON CAUTELA"); }
+        
+        function unlockOrder() { 
+            forceUnlock = true; 
+            update(); 
+            notify("BÚNKER DESBLOQUEADO - META ACTUALIZADA A X2"); 
+        }
+
         function editBalance() { 
             const n = prompt("Ajustar Capital Inicial:", capital); if(n) capital = parseFloat(n);
             const g = prompt("Ajustar Meta Mensual:", monthlyGoal); if(g) monthlyGoal = parseFloat(g);
             save(); update(); 
         }
+
         function resetData() { 
-            if(prompt("Escriba 'FORMATEAR' para borrar todo:") === 'FORMATEAR') { orders = []; capital = 50.0; save(); update(); notify("SISTEMA RESETEADO"); } 
+            if(prompt("Escriba 'FORMATEAR' para borrar todo:") === 'FORMATEAR') { 
+                orders = []; capital = 50.0; forceUnlock = false; save(); update(); notify("SISTEMA RESETEADO"); 
+            } 
         }
+
         function notify(m) { 
             const n = document.getElementById('notif'); n.innerText = m; n.style.opacity = '1'; n.style.transform = 'translateY(0) translateX(-50%)'; 
             setTimeout(() => { n.style.opacity = '0'; n.style.transform = 'translateY(10px) translateX(-50%)'; }, 3000); 
         }
+
         window.onload = () => { lucide.createIcons(); update(); };
     </script>
 </body>
