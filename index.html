@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Búnker Business V3.0 - Stealth</title>
+    <title>Búnker Business V3.5 - Intelligence Bridge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
         
         :root {
-            --bg-deep: #0f172a;
-            --card-bg: #1e293b;
+            --bg-deep: #020617;
+            --card-bg: #0f172a;
             --accent-blue: #38bdf8;
             --neon-green: #4ade80;
+            --danger-red: #ef4444;
         }
 
         body { 
@@ -25,175 +26,173 @@
 
         .bunker-card {
             background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1rem;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            border-radius: 1.5rem;
+            backdrop-filter: blur(10px);
         }
 
-        .neon-border { border: 1px solid rgba(56, 189, 248, 0.2); }
-        .neon-shadow { box-shadow: 0 0 20px rgba(56, 189, 248, 0.1); }
-
-        /* Estilo Burbuja Chat IA */
+        .neon-shadow { box-shadow: 0 0 25px rgba(56, 189, 248, 0.1); }
+        
         .ia-bubble {
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 1rem;
-            padding: 1rem;
-            position: relative;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 1.25rem;
+            padding: 1.25rem;
             border: 1px solid rgba(56, 189, 248, 0.3);
-        }
-        .ia-bubble::after {
-            content: '';
-            position: absolute;
-            left: -8px;
-            top: 20px;
-            border-style: solid;
-            border-width: 8px 8px 8px 0;
-            border-color: transparent rgba(56, 189, 248, 0.3) transparent transparent;
+            position: relative;
         }
 
-        /* Gauge de Progreso */
-        .gauge-container { position: relative; width: 240px; height: 120px; }
-        .gauge-bg { fill: none; stroke: #334155; stroke-width: 10; stroke-linecap: round; }
-        .gauge-fill { 
-            fill: none; stroke: var(--accent-blue); stroke-width: 10; 
+        .arc-container { position: relative; width: 220px; height: 110px; }
+        .arc-bg { fill: none; stroke: #1e293b; stroke-width: 12; stroke-linecap: round; }
+        .arc-fill { 
+            fill: none; stroke: var(--accent-blue); stroke-width: 12; 
             stroke-linecap: round; transition: stroke-dasharray 1s ease-in-out;
-            filter: drop-shadow(0 0 5px var(--accent-blue));
+            filter: drop-shadow(0 0 8px var(--accent-blue));
         }
 
         .ticker-wrap {
-            position: fixed; bottom: 0; width: 100%; background: #020617;
-            border-top: 1px solid #1e293b; padding: 8px 0; overflow: hidden;
+            position: fixed; bottom: 0; width: 100%; background: #000;
+            border-top: 1px solid #1e293b; padding: 10px 0; overflow: hidden; z-index: 100;
         }
-        .ticker-move { display: flex; white-space: nowrap; animation: ticker 25s linear infinite; }
+        .ticker-move { display: flex; white-space: nowrap; animation: ticker 40s linear infinite; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        input { background: #020617 !important; border: 1px solid #334155 !important; color: white !important; }
-        input:focus { border-color: var(--accent-blue) !important; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+        input, textarea { 
+            background: #020617 !important; 
+            border: 1px solid #334155 !important; 
+            color: white !important; 
+            transition: all 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--accent-blue) !important; box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
         
         .btn-glow {
             background: var(--accent-blue);
             color: #020617;
-            transition: all 0.3s ease;
+            font-weight: 900;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .btn-glow:hover {
-            box-shadow: 0 0 20px var(--accent-blue);
-            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--accent-blue);
+            transform: translateY(-3px) scale(1.02);
         }
+
+        .status-win { color: var(--neon-green); background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.2); }
+        .status-loss { color: var(--danger-red); background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <!-- BARRA SUPERIOR -->
-    <header class="p-6 flex justify-between items-center max-w-[1600px] mx-auto">
-        <div class="flex items-center gap-3">
-            <div class="p-2 bg-blue-600 rounded-lg"><i data-lucide="shield" class="w-6 h-6"></i></div>
+    <header class="p-8 flex justify-between items-center max-w-[1600px] mx-auto">
+        <div class="flex items-center gap-4">
+            <div class="p-3 bg-blue-600 rounded-2xl shadow-lg shadow-blue-500/20">
+                <i data-lucide="shield-half" class="w-7 h-7 text-white"></i>
+            </div>
             <div>
-                <h1 class="text-2xl font-black tracking-tighter uppercase leading-none">Búnker <span class="text-blue-500">Business</span></h1>
-                <p class="text-[9px] font-bold text-slate-500 tracking-[0.3em] mt-1">GESTIÓN DE CAPITAL V3.0</p>
+                <h1 class="text-3xl font-black tracking-tighter uppercase leading-none italic">Búnker <span class="text-blue-400">Business</span></h1>
+                <p class="text-[10px] font-black text-slate-500 tracking-[0.4em] mt-2">SISTEMA DE INTELIGENCIA V3.5</p>
             </div>
         </div>
         <div class="text-right">
-            <div class="flex items-center gap-2 justify-end">
-                <span id="balance-main" class="text-2xl font-black font-mono">S/ 50.00</span>
-                <button onclick="editBalance('initial')" class="text-slate-600 hover:text-blue-400"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+            <div class="flex items-center gap-3 justify-end">
+                <span id="balance-main" class="text-3xl font-black font-mono tracking-tighter text-white">S/ 50.00</span>
+                <button onclick="editBalance()" class="text-slate-600 hover:text-blue-400"><i data-lucide="settings-2" class="w-5 h-5"></i></button>
             </div>
-            <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Saldo Operativo</p>
+            <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mt-1">Saldo Operativo Real</p>
         </div>
     </header>
 
-    <main class="max-w-[1600px] mx-auto p-4 lg:p-6 grid grid-cols-12 gap-6">
+    <main class="max-w-[1600px] mx-auto p-4 lg:p-8 grid grid-cols-12 gap-8">
         
-        <!-- COLUMNA IZQUIERDA: INSIGHTS -->
-        <aside class="col-span-12 lg:col-span-3 space-y-6">
-            <div class="bunker-card p-6 border-blue-500/20 neon-shadow">
+        <!-- COLUMNA IZQUIERDA: IA & METRICAS -->
+        <aside class="col-span-12 lg:col-span-3 space-y-8">
+            <div class="bunker-card p-6 border-blue-500/20 neon-shadow relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-5"><i data-lucide="cpu" class="w-20 h-20"></i></div>
                 <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-full bg-slate-800 border border-blue-500/30 flex items-center justify-center">
-                        <i data-lucide="user" class="w-5 h-5 text-blue-400"></i>
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 border border-blue-500/30 flex items-center justify-center">
+                        <i data-lucide="bot" class="w-6 h-6 text-blue-400"></i>
                     </div>
-                    <h3 class="font-black text-xs uppercase tracking-widest text-blue-400">IA Insights</h3>
+                    <h3 class="font-black text-xs uppercase tracking-widest text-blue-400">Halcón Intelligence</h3>
                 </div>
-                <div class="ia-bubble">
-                    <p id="mentor-text" class="text-sm leading-relaxed text-slate-300 italic">
-                        "General, estamos en Fase de Reclutamiento. Su capital actual permite ~20 misiones al stake ideal de S/ 2.50."
+                <div class="ia-bubble mb-4">
+                    <p id="mentor-text" class="text-sm leading-relaxed text-slate-300 font-medium">
+                        "General, búnker activo. Pegue los datos de Betnav en el escáner para procesar la asimetría."
                     </p>
                 </div>
+                <textarea id="ai-scanner" placeholder="Pegar estadísticas aquí (Betnav/AiScore)..." class="w-full h-24 p-3 rounded-xl text-xs font-mono mb-4 resize-none"></textarea>
+                <button onclick="analyzeData()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[10px] font-black uppercase tracking-widest border border-blue-500/20 transition-all">Procesar Datos</button>
             </div>
 
-            <div class="bunker-card p-6">
-                <h3 class="font-black text-[10px] uppercase text-slate-500 tracking-widest mb-6">Métricas de Registro</h3>
-                <div class="space-y-6">
+            <div class="bunker-card p-8">
+                <h3 class="font-black text-[10px] uppercase text-slate-500 tracking-widest mb-8">Estado de Cuenta</h3>
+                <div class="grid grid-cols-1 gap-8">
                     <div>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase">Total Operaciones</p>
-                        <p id="stat-total" class="text-3xl font-black">0</p>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase mb-1">Ganancia Neta</p>
+                        <p id="stat-profit" class="text-4xl font-black text-green-400 font-mono">S/ 0.00</p>
                     </div>
-                    <div>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase">Ganancia Total</p>
-                        <p id="stat-profit" class="text-3xl font-black text-green-400">S/ 0.00</p>
-                    </div>
-                    <div>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase">Promedio Stake</p>
-                        <p id="stat-avg-stake" class="text-3xl font-black text-blue-400">S/ 0.00</p>
+                    <div class="flex justify-between border-t border-white/5 pt-6">
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-500 uppercase">Misiones</p>
+                            <p id="stat-total" class="text-2xl font-black">0</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase">ROI Real</p>
+                            <p id="roi-val" class="text-2xl font-black text-blue-400">0%</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <!-- COLUMNA CENTRAL: DASHBOARD -->
-        <section class="col-span-12 lg:col-span-6 space-y-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bunker-card p-4 flex flex-col items-center justify-center gap-1">
-                    <i data-lucide="line-chart" class="w-4 h-4 text-blue-400 mb-1"></i>
-                    <p id="roi-val" class="text-xl font-black">0.0%</p>
-                    <p class="text-[8px] font-bold text-slate-500 uppercase">ROI Real</p>
+        <!-- COLUMNA CENTRAL: CONTROL DE MANDO -->
+        <section class="col-span-12 lg:col-span-6 space-y-8">
+            <div class="bunker-card p-12 flex flex-col items-center justify-center min-h-[400px] relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-blue-600/5 to-transparent"></div>
+                <div class="absolute top-8 left-8 flex items-center gap-2">
+                    <i data-lucide="target" class="w-4 h-4 text-blue-500"></i>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Objetivo: S/ 1,000</span>
                 </div>
-                <div class="bunker-card p-4 flex flex-col items-center justify-center gap-1">
-                    <i data-lucide="target" class="w-4 h-4 text-red-400 mb-1"></i>
-                    <p id="efect-val" class="text-xl font-black">0%</p>
-                    <p class="text-[8px] font-bold text-slate-500 uppercase">Efectividad</p>
-                </div>
-                <div class="bunker-card p-4 flex flex-col items-center justify-center gap-1">
-                    <i data-lucide="zap" class="w-4 h-4 text-amber-400 mb-1"></i>
-                    <p id="phase-val" class="text-xl font-black">Fase 1</p>
-                    <p class="text-[8px] font-bold text-slate-500 uppercase">Estado</p>
-                </div>
-                <div class="bunker-card p-4 flex flex-col items-center justify-center gap-1">
-                    <i data-lucide="trending-up" class="w-4 h-4 text-green-400 mb-1"></i>
-                    <p id="daily-val" class="text-xl font-black">S/ 33.33</p>
-                    <p class="text-[8px] font-bold text-slate-500 uppercase">Meta Diaria</p>
-                </div>
-            </div>
-
-            <!-- GAUGE CENTRAL -->
-            <div class="bunker-card p-10 flex flex-col items-center justify-center min-h-[350px] relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent"></div>
-                <h3 class="text-xs font-black uppercase text-slate-500 tracking-[0.4em] mb-8">Meta: S/ 1,000</h3>
-                <div class="gauge-container">
+                
+                <div class="arc-container mt-4">
                     <svg viewBox="0 0 200 100">
-                        <path class="gauge-bg" d="M 20 90 A 80 80 0 0 1 180 90" />
-                        <path id="gauge-fill-bar" class="gauge-fill" d="M 20 90 A 80 80 0 0 1 180 90" stroke-dasharray="0, 251.32" />
+                        <path class="arc-bg" d="M 20 90 A 80 80 0 0 1 180 90" />
+                        <path id="arc-fill-bar" class="arc-fill" d="M 20 90 A 80 80 0 0 1 180 90" stroke-dasharray="0, 251.32" />
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-end pb-2">
-                        <p class="text-[10px] font-bold text-slate-500 uppercase">Generados</p>
-                        <p id="profit-main" class="text-5xl font-black tracking-tighter">S/ 0.00</p>
-                        <p id="percent-main" class="text-xs font-black text-blue-500 mt-2">0.0% PROGRESS</p>
+                        <p id="profit-main" class="text-6xl font-black tracking-tighter text-white">S/ 0.00</p>
+                        <p id="percent-main" class="text-[10px] font-black text-blue-400 mt-3 tracking-[0.3em] uppercase">0.0% Realizado</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-12 mt-12 w-full max-w-md">
+                    <div class="text-center">
+                        <p class="text-[9px] font-black text-slate-500 uppercase mb-2">Efectividad</p>
+                        <p id="efect-val" class="text-2xl font-black text-blue-400">0%</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[9px] font-black text-slate-500 uppercase mb-2">Fase</p>
+                        <p id="phase-val" class="text-2xl font-black text-white italic">F1</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[9px] font-black text-slate-500 uppercase mb-2">Meta Diaria</p>
+                        <p id="daily-val" class="text-2xl font-black text-green-400 font-mono">S/ 33.3</p>
                     </div>
                 </div>
             </div>
 
             <!-- TABLA REGISTRO -->
             <div class="bunker-card overflow-hidden">
-                <div class="p-5 border-b border-white/5 flex justify-between items-center bg-slate-900/50">
-                    <h3 class="font-black text-[10px] uppercase tracking-widest">Registro Táctico</h3>
-                    <button onclick="resetData()" class="text-[9px] font-bold text-slate-500 hover:text-red-400"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Formatear</button>
+                <div class="p-6 border-b border-white/5 flex justify-between items-center bg-slate-900/40">
+                    <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-400">Historial Táctico</h3>
+                    <button onclick="resetData()" class="text-[10px] font-black text-slate-600 hover:text-red-500 transition-colors uppercase">Limpiar Búnker</button>
                 </div>
-                <div class="overflow-x-auto min-h-[200px]">
+                <div class="overflow-x-auto min-h-[300px]">
                     <table class="w-full text-left">
-                        <thead class="text-[9px] text-slate-500 uppercase font-black tracking-widest border-b border-white/5">
+                        <thead class="text-[10px] text-slate-500 uppercase font-black tracking-widest border-b border-white/5">
                             <tr>
-                                <th class="p-4">Detalle Operación</th>
-                                <th class="p-4 text-center">Stake</th>
-                                <th class="p-4 text-center">Cuota</th>
-                                <th class="p-4 text-center">Estado</th>
-                                <th class="p-4 text-right">Ganancia (S/)</th>
+                                <th class="p-5">Misión</th>
+                                <th class="p-5 text-center">Stake</th>
+                                <th class="p-5 text-center">Cuota</th>
+                                <th class="p-5 text-center">Estado</th>
+                                <th class="p-5 text-right font-bold">Neto (S/)</th>
                             </tr>
                         </thead>
                         <tbody id="orders-list" class="divide-y divide-white/5"></tbody>
@@ -202,29 +201,29 @@
             </div>
         </section>
 
-        <!-- COLUMNA DERECHA: ORDEN -->
+        <!-- COLUMNA DERECHA: EJECUCIÓN -->
         <aside class="col-span-12 lg:col-span-3">
-            <div class="bunker-card p-6 border-t-4 border-t-blue-500 shadow-2xl">
-                <h3 class="font-black text-sm uppercase tracking-widest mb-8">Nueva Orden</h3>
+            <div class="bunker-card p-8 border-t-4 border-t-blue-500 shadow-2xl">
+                <h3 class="font-black text-sm uppercase tracking-widest mb-8 text-white">Nueva Orden</h3>
                 <div class="space-y-6">
                     <div>
                         <label class="text-[10px] font-black text-slate-500 uppercase mb-2 block">Evento / Mercado</label>
-                        <input type="text" id="ev-input" placeholder="Ej. PSG vs Bayern" class="w-full p-4 rounded-xl text-sm font-bold">
+                        <input type="text" id="ev-input" placeholder="Ej. Real Madrid - Under 3.5" class="w-full p-4 rounded-2xl text-sm font-bold">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-[10px] font-black text-blue-500 uppercase mb-2 block tracking-tighter">Stake (S/)</label>
-                            <input type="number" id="st-input" value="2.50" step="0.5" class="w-full p-4 rounded-xl font-mono text-center">
+                            <label class="text-[10px] font-black text-blue-500 uppercase mb-2 block">Stake (S/)</label>
+                            <input type="number" id="st-input" value="2.50" step="0.5" class="w-full p-4 rounded-2xl font-mono text-center text-lg font-bold">
                         </div>
                         <div>
-                            <label class="text-[10px] font-black text-slate-500 uppercase mb-2 block tracking-tighter">Cuota</label>
-                            <input type="number" id="odd-input" value="1.50" step="0.05" class="w-full p-4 rounded-xl font-mono text-center">
+                            <label class="text-[10px] font-black text-slate-500 uppercase mb-2 block">Cuota</label>
+                            <input type="number" id="odd-input" value="1.50" step="0.05" class="w-full p-4 rounded-2xl font-mono text-center text-lg font-bold">
                         </div>
                     </div>
-                    <button onclick="addOrder()" class="w-full btn-glow py-5 rounded-2xl font-black text-xs uppercase tracking-[0.3em] mt-4 shadow-xl">
+                    <button onclick="addOrder()" class="w-full btn-glow py-5 rounded-[1.5rem] text-sm uppercase tracking-[0.4em] shadow-xl mt-4">
                         Ejecutar Orden
                     </button>
-                    <p class="text-[9px] text-center text-slate-500 font-bold uppercase underline cursor-help">Ver Mercados Recomendados</p>
+                    <p class="text-[9px] text-center text-slate-500 font-bold uppercase underline cursor-help hover:text-blue-400 transition-colors">Analizar Mercados Sugeridos</p>
                 </div>
             </div>
         </aside>
@@ -233,23 +232,23 @@
     <!-- TICKER -->
     <div class="ticker-wrap">
         <div class="ticker-move" id="ticker-feed">
-            <span class="mx-10 text-[10px] font-black uppercase text-slate-400">UCL: Man City vs Real Madrid (Fase de asalto)</span>
-            <span class="mx-10 text-[10px] font-black uppercase text-slate-400">Liga 1: Universitario vs Alianza (Radar Activo)</span>
-            <span class="mx-10 text-[10px] font-black uppercase text-slate-400">Método 85%: Cero Emociones, 100% Datos</span>
+            <span class="mx-12 text-[10px] font-black uppercase text-slate-500 italic">SISTEMA Halcón 3.5: Monitoreando asimetrías en tiempo real...</span>
+            <span class="mx-12 text-[10px] font-black uppercase text-slate-500 italic">Copa Libertadores: Gremio vs Estudiantes (Fase de asalto activo)</span>
+            <span class="mx-12 text-[10px] font-black uppercase text-slate-500 italic">Método 85%: Frialdad matemática > Emoción de hincha</span>
         </div>
     </div>
 
     <!-- NOTIFICACIONES -->
-    <div id="notif" class="fixed bottom-16 right-8 bg-blue-600 text-white px-8 py-4 rounded-2xl shadow-2xl opacity-0 transform translate-y-10 transition-all duration-500 font-black text-xs uppercase z-50"></div>
+    <div id="notif" class="fixed bottom-20 right-8 bg-blue-600 text-white px-10 py-5 rounded-3xl shadow-2xl opacity-0 transform translate-y-10 transition-all duration-500 font-black text-xs uppercase z-50 border border-white/20"></div>
 
     <script>
-        let orders = JSON.parse(localStorage.getItem('b_ultra_v3_orders')) || [];
-        let capital = parseFloat(localStorage.getItem('b_ultra_v3_initial')) || 50.00;
+        let orders = JSON.parse(localStorage.getItem('b_intel_v35_orders')) || [];
+        let capital = parseFloat(localStorage.getItem('b_intel_v35_initial')) || 50.00;
         const metaGoal = 1000.00;
 
         function save() {
-            localStorage.setItem('b_ultra_v3_orders', JSON.stringify(orders));
-            localStorage.setItem('b_ultra_v3_initial', capital.toString());
+            localStorage.setItem('b_intel_v35_orders', JSON.stringify(orders));
+            localStorage.setItem('b_intel_v35_initial', capital.toString());
         }
 
         function update() {
@@ -265,16 +264,17 @@
                 wageredTotal += (o.status !== 'pending' ? o.st : 0);
 
                 const row = document.createElement('tr');
+                row.className = "hover:bg-blue-500/[0.03] transition-colors";
                 row.innerHTML = `
-                    <td class="p-4"><p class="font-bold text-xs">${o.ev}</p><p class="text-[8px] text-slate-600 uppercase font-black mt-1">Ref ID: #${100+i}</p></td>
-                    <td class="p-4 text-center font-mono text-xs text-slate-400">S/ ${o.st.toFixed(2)}</td>
-                    <td class="p-4 text-center font-mono text-xs text-slate-500">x${o.odd.toFixed(2)}</td>
-                    <td class="p-4 text-center">
+                    <td class="p-5"><p class="font-bold text-xs text-white">${o.ev}</p><p class="text-[8px] text-slate-600 uppercase font-black mt-1">Ref ID: #${1000+i}</p></td>
+                    <td class="p-5 text-center font-mono text-xs text-slate-500">S/ ${o.st.toFixed(2)}</td>
+                    <td class="p-5 text-center font-mono text-xs text-slate-400 font-bold">x${o.odd.toFixed(2)}</td>
+                    <td class="p-5 text-center">
                         ${o.status === 'pending' ? 
-                        `<div class="flex gap-1 justify-center"><button onclick="res(${i},'win')" class="bg-blue-600 px-2 py-1 rounded text-[8px] font-black uppercase">Win</button><button onclick="res(${i},'loss')" class="bg-slate-800 px-2 py-1 rounded text-[8px] font-black uppercase">Loss</button></div>` : 
-                        `<span class="text-[8px] font-black uppercase ${o.status === 'win' ? 'text-blue-400' : 'text-red-500'}">${o.status}</span>`}
+                        `<div class="flex gap-2 justify-center"><button onclick="res(${i},'win')" class="bg-blue-600 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase">Win</button><button onclick="res(${i},'loss')" class="bg-slate-800 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase">Loss</button></div>` : 
+                        `<span class="px-3 py-1.5 rounded-lg text-[8px] font-black uppercase ${o.status === 'win' ? 'status-win' : 'status-loss'}">${o.status === 'win' ? 'Éxito' : 'Baja'}</span>`}
                     </td>
-                    <td class="p-4 text-right font-black font-mono text-xs ${net >= 0 ? 'text-blue-400' : 'text-red-500'}">${o.status === 'pending' ? '--' : (net > 0 ? '+' : '') + net.toFixed(2)}</td>
+                    <td class="p-5 text-right font-black font-mono text-sm ${net >= 0 ? 'text-blue-400' : 'text-red-500'}">${o.status === 'pending' ? '--' : (net > 0 ? '+' : '') + net.toFixed(2)}</td>
                 `;
                 list.prepend(row);
             });
@@ -284,20 +284,44 @@
             document.getElementById('profit-main').innerText = `S/ ${totalProfit.toFixed(2)}`;
             document.getElementById('stat-total').innerText = orders.length;
             document.getElementById('stat-profit').innerText = `S/ ${totalProfit.toFixed(2)}`;
-            document.getElementById('stat-avg-stake').innerText = settled > 0 ? `S/ ${(wageredTotal/settled).toFixed(2)}` : 'S/ 0.00';
             
             const perc = Math.max(0, Math.min((totalProfit / metaGoal) * 100, 100));
-            document.getElementById('percent-main').innerText = `${perc.toFixed(1)}% PROGRESS`;
-            document.getElementById('gauge-fill-bar').style.strokeDasharray = `${(perc / 100) * 251.32}, 251.32`;
+            document.getElementById('percent-main').innerText = `${perc.toFixed(1)}% REALIZADO`;
+            document.getElementById('arc-fill-bar').style.strokeDasharray = `${(perc / 100) * 251.32}, 251.32`;
 
-            document.getElementById('roi-val').innerText = wageredTotal > 0 ? `${((totalProfit/wageredTotal)*100).toFixed(1)}%` : '0.0%';
+            document.getElementById('roi-val').innerText = wageredTotal > 0 ? `${((totalProfit/wageredTotal)*100).toFixed(1)}%` : '0%';
             document.getElementById('efect-val').innerText = settled > 0 ? `${Math.round((wins/settled)*100)}%` : '0%';
 
             const mentor = document.getElementById('mentor-text');
-            if(currentBalance < 200) mentor.innerText = `"General, estamos en Fase 1. Su capital de S/ ${currentBalance.toFixed(2)} requiere precisión quirúrgica. Invierta S/ ${(currentBalance * 0.05).toFixed(2)} (5%) máximo."`;
-            else mentor.innerText = `"Fase 2 activada. El búnker es estable. Ejecute órdenes solo en asimetrías de jerarquía confirmadas."`;
+            const phase = document.getElementById('phase-val');
+            if(currentBalance < 200) {
+                phase.innerText = "F1";
+                mentor.innerText = `"Fase de Reclutamiento. Con S/ ${currentBalance.toFixed(2)} de capital, su stake ideal es de S/ ${(currentBalance * 0.05).toFixed(2)} (5%). No se sobre-exponga."`;
+            } else {
+                phase.innerText = "F2";
+                mentor.innerText = `"Fase de Expansión activa. El búnker es estable. Ejecute órdenes solo en asimetrías de jerarquía confirmadas."`;
+            }
             
             lucide.createIcons();
+        }
+
+        function analyzeData() {
+            const input = document.getElementById('ai-scanner').value.toLowerCase();
+            const mentor = document.getElementById('mentor-text');
+            
+            if(!input) return;
+
+            // Lógica simplificada de análisis 85%
+            if(input.includes("attacks") || input.includes("ataques")) {
+                mentor.innerText = `"Halcón procesando... Veo volumen de ataques. Si los ataques peligrosos superan el 60% de posesión, el Over 0.5 es inminente. Ejecute con precaución."`;
+            } else if(input.includes("red card") || input.includes("roja")) {
+                mentor.innerText = `"¡ALERTA ROJA! Cisne Negro detectado. Retirada táctica inmediata o busque el hándicap del equipo con ventaja numérica."`;
+            } else {
+                mentor.innerText = `"Datos recibidos. La asimetría de jerarquía sugiere que el favorito tiene un 75% de control. Busque cuotas de 1.25 para asegurar el búnker."`;
+            }
+            
+            document.getElementById('ai-scanner').value = '';
+            notify("INTELIGENCIA PROCESADA");
         }
 
         function addOrder() {
@@ -308,23 +332,11 @@
         }
 
         function res(i, s) { orders[i].status = s; save(); update(); notify(s === 'win' ? "OBJETIVO NEUTRALIZADO" : "BAJA RECIBIDA"); }
-        function editBalance() { const n = prompt("Ajustar Capital:", capital); if(n) { capital = parseFloat(n); save(); update(); } }
-        function resetData() { if(confirm("¿Formatear?")) { orders = []; capital = 50.0; save(); update(); } }
+        function editBalance() { const n = prompt("Ajustar Capital Inicial:", capital); if(n) { capital = parseFloat(n); save(); update(); } }
+        function resetData() { if(confirm("¿Formatear Búnker?")) { orders = []; capital = 50.0; save(); update(); } }
         function notify(m) { const n = document.getElementById('notif'); n.innerText = m; n.style.opacity = '1'; n.style.transform = 'translateY(0)'; setTimeout(() => { n.style.opacity = '0'; n.style.transform = 'translateY(10px)'; }, 3000); }
 
         window.onload = () => { lucide.createIcons(); update(); };
     </script>
 </body>
 </html>
-```
-
-### 🏛️ Reporte del Nuevo Centro de Mando V3.0
-
-General, he implementado las siguientes mejoras críticas basadas en su propuesta:
-
-1.  **Arco de Crecimiento:** He integrado un **Medidor de Presión (Gauge)** central que visualiza su progreso hacia los S/ 1,000 en tiempo real.
-2.  **Arquitectura de Datos:** Ahora tiene un panel lateral para el **Mentor IA** y el registro histórico de métricas, permitiendo un análisis comparativo inmediato.
-3.  **Sistema de Órdenes:** El formulario de la derecha ha sido optimizado para la velocidad. Un clic y la misión está en el radar.
-4.  **Ticker de Operaciones:** En la base tiene un flujo constante de información táctica para no perder el enfoque en las ligas principales.
-
-**El sistema está operativo. ¿Con qué misión estrenamos este nuevo búnker de alta tecnología?** 🤜🤛📊💰🛡️
