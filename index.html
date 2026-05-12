@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Búnker Business V4.2.1 - Goal Master</title>
+    <title>Búnker Business V4.2.2 - Élite</title>
     
-    <meta name="theme-color" content="#020617">
+    <meta name="theme-color" content="#ffffff">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -81,7 +81,7 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-black tracking-tighter uppercase leading-none text-slate-900">Búnker <span class="text-blue-600">Business</span></h1>
-                    <p class="text-[9px] font-bold text-slate-400 tracking-[0.3em] mt-1 uppercase italic">Goal Master V4.2.1</p>
+                    <p class="text-[9px] font-bold text-slate-400 tracking-[0.3em] mt-1 uppercase italic">Élite V4.2.2</p>
                 </div>
             </div>
             <div class="text-right">
@@ -97,23 +97,12 @@
     <main class="max-w-[1600px] mx-auto p-4 lg:p-8 grid grid-cols-12 gap-6">
         
         <aside class="col-span-12 lg:col-span-3 space-y-6">
-            <div class="architect-card p-5 border-t-4 border-t-blue-600">
-                <div class="flex items-center gap-2 mb-4">
-                    <i data-lucide="calculator" class="w-4 h-4 text-blue-600"></i>
-                    <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-900">Laboratorio Táctico</h3>
+            <!-- PANEL RENDIMIENTO AMPLIADO -->
+            <div class="architect-card p-6 border-t-4 border-t-blue-600">
+                <div class="flex items-center gap-2 mb-6">
+                    <i data-lucide="activity" class="w-4 h-4 text-blue-600"></i>
+                    <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-900">Métricas de Control</h3>
                 </div>
-                <div class="space-y-3">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="number" id="lab-att" placeholder="At. Peligrosos" class="w-full text-xs">
-                        <input type="number" id="lab-min" placeholder="Minuto" class="w-full text-xs">
-                    </div>
-                    <button onclick="calculateFriction()" class="w-full py-2 bg-blue-50 text-blue-700 text-[10px] font-bold uppercase rounded border border-blue-100">Analizar Probabilidad</button>
-                    <div id="lab-result" class="hidden p-3 rounded bg-slate-50 border border-slate-100 text-[10px] font-medium leading-relaxed italic"></div>
-                </div>
-            </div>
-
-            <div class="architect-card p-6">
-                <h3 class="font-black text-[10px] uppercase text-slate-400 tracking-widest mb-6">Rendimiento</h3>
                 <div class="space-y-6">
                     <div>
                         <p class="text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-widest">Ganancia Neta Total</p>
@@ -131,9 +120,20 @@
                     </div>
                 </div>
             </div>
+
+            <div class="architect-card p-5 bg-slate-900 text-white border-none shadow-lg">
+                <div class="flex items-center gap-2 mb-3">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-blue-400"></i>
+                    <h4 class="text-[10px] font-black uppercase tracking-widest">IA Mentor</h4>
+                </div>
+                <p id="mentor-msg" class="text-xs leading-relaxed font-medium italic opacity-90">
+                    "General, el búnker está optimizado. Monitoreando asimetrías en el radar."
+                </p>
+            </div>
         </aside>
 
         <section class="col-span-12 lg:col-span-6 space-y-6">
+            <!-- PROGRESO CENTRAL -->
             <div class="architect-card p-8 flex flex-col items-center justify-center min-h-[300px]">
                 <div class="w-full flex justify-between items-start mb-2 px-10">
                     <div class="flex items-center gap-2">
@@ -169,11 +169,11 @@
                 </div>
             </div>
 
-            <!-- TABLE -->
+            <!-- TABLA DE OPERACIONES -->
             <div class="architect-card overflow-hidden">
                 <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
                     <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-500">Libro de Operaciones</h3>
-                    <button onclick="resetData()" class="text-[9px] font-bold text-slate-400 hover:text-red-500 uppercase underline">Reiniciar Sistema</button>
+                    <button onclick="resetData()" class="text-[9px] font-bold text-slate-400 hover:text-red-500 uppercase underline tracking-tighter">Reiniciar Sistema</button>
                 </div>
                 <div class="overflow-x-auto min-h-[300px]">
                     <table class="w-full text-left">
@@ -194,48 +194,40 @@
 
         <aside class="col-span-12 lg:col-span-3">
             <div class="architect-card p-6 relative">
+                <!-- SISTEMA DE BLOQUEO POR META -->
                 <div id="goal-lock" class="goal-lock-overlay">
                     <div class="bg-blue-600 w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-lg">
                         <i data-lucide="lock" class="text-white w-6 h-6"></i>
                     </div>
-                    <p class="text-sm font-black uppercase text-slate-900 leading-tight">Meta Cumplida</p>
-                    <p class="text-[10px] text-slate-500 mt-2 font-medium px-4">Búnker cerrado por seguridad operativa. ¿Desea forzar apertura?</p>
+                    <p class="text-sm font-black uppercase text-slate-900 leading-tight px-4">Meta Cumplida</p>
+                    <p class="text-[10px] text-slate-500 mt-2 font-medium px-4">Búnker cerrado por seguridad operativa.</p>
                     <button onclick="unlockOrder()" class="mt-6 mx-6 py-2 px-4 bg-slate-900 text-white text-[9px] font-black uppercase rounded hover:bg-black transition-all">
-                        Continuar (Sobre-operación)
+                        Seguir (Sobre-operación)
                     </button>
                 </div>
+
                 <h3 class="font-black text-xs uppercase tracking-widest mb-8 text-slate-900">Nueva Orden</h3>
                 <div class="space-y-6">
                     <div>
                         <label class="text-[9px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Evento / Selección</label>
-                        <input type="text" id="ev-input" placeholder="Ej. Real Madrid - Over 0.5" class="w-full text-xs">
+                        <input type="text" id="ev-input" placeholder="Ej. Al Hilal - Over 2.5" class="w-full text-xs">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-[9px] font-black text-blue-600 uppercase mb-2 block text-center">Inversión (S/)</label>
+                            <label class="text-[9px] font-black text-blue-600 uppercase mb-2 block text-center tracking-widest">Inversión (S/)</label>
                             <input type="number" id="st-input" value="2.50" step="0.5" class="w-full font-mono text-center text-sm font-bold text-slate-900">
                         </div>
                         <div>
-                            <label class="text-[9px] font-black text-slate-400 uppercase mb-2 block text-center">Cuota</label>
+                            <label class="text-[9px] font-black text-slate-400 uppercase mb-2 block text-center tracking-widest">Cuota</label>
                             <input type="number" id="odd-input" value="1.50" step="0.05" class="w-full font-mono text-center text-sm font-bold text-slate-900">
                         </div>
                     </div>
                     <div>
-                        <label class="text-[9px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Nota Táctica / Cisne Negro</label>
-                        <textarea id="note-input" placeholder="¿Por qué se ejecutó?" class="w-full h-16 text-xs resize-none"></textarea>
+                        <label class="text-[9px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Nota / Cisne Negro</label>
+                        <textarea id="note-input" placeholder="Justificación táctica..." class="w-full h-20 text-xs resize-none"></textarea>
                     </div>
                     <button id="confirm-btn" onclick="addOrder()" class="w-full btn-command py-4 text-xs shadow-md mt-4">Confirmar Orden</button>
                 </div>
-            </div>
-
-            <div class="mt-6 architect-card p-5 bg-blue-600 border-none shadow-lg text-white">
-                <div class="flex items-center gap-2 mb-3">
-                    <i data-lucide="sparkles" class="w-4 h-4"></i>
-                    <h4 class="text-[10px] font-black uppercase tracking-widest">Estrategia Dinámica</h4>
-                </div>
-                <p id="mentor-msg" class="text-xs leading-relaxed font-medium italic opacity-90">
-                    "General, monitoreando el frente de batalla. Mantenga la mente fría."
-                </p>
             </div>
         </aside>
     </main>
@@ -243,24 +235,22 @@
     <div id="notif" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-10 py-3 rounded-full font-bold text-[10px] uppercase z-50 opacity-0 transform translate-y-10 transition-all duration-300 shadow-2xl"></div>
 
     <script>
-        let orders = JSON.parse(localStorage.getItem('bunker_arch_v4_2_orders')) || [];
-        let capital = parseFloat(localStorage.getItem('bunker_arch_v4_2_initial')) || 50.00;
-        let monthlyGoal = parseFloat(localStorage.getItem('bunker_arch_v4_2_goal')) || 1000.00;
-        let forceUnlock = JSON.parse(localStorage.getItem('bunker_arch_v4_2_unlock')) || false;
+        let orders = JSON.parse(localStorage.getItem('bunker_v4_2_2_orders')) || [];
+        let capital = parseFloat(localStorage.getItem('bunker_v4_2_2_initial')) || 50.00;
+        let monthlyGoal = parseFloat(localStorage.getItem('bunker_v4_2_2_goal')) || 1000.00;
+        let forceUnlock = JSON.parse(localStorage.getItem('bunker_v4_2_2_unlock')) || false;
 
         function save() {
-            localStorage.setItem('bunker_arch_v4_2_orders', JSON.stringify(orders));
-            localStorage.setItem('bunker_arch_v4_2_initial', capital.toString());
-            localStorage.setItem('bunker_arch_v4_2_goal', monthlyGoal.toString());
-            localStorage.setItem('bunker_arch_v4_2_unlock', JSON.stringify(forceUnlock));
+            localStorage.setItem('bunker_v4_2_2_orders', JSON.stringify(orders));
+            localStorage.setItem('bunker_v4_2_2_initial', capital.toString());
+            localStorage.setItem('bunker_v4_2_2_goal', monthlyGoal.toString());
+            localStorage.setItem('bunker_v4_2_2_unlock', JSON.stringify(forceUnlock));
         }
 
         function update() {
             const list = document.getElementById('orders-list');
             list.innerHTML = '';
-            let totalProfit = 0, settled = 0, wins = 0, totalStake = 0;
-            let todayProfit = 0;
-            // Usamos formato ISO para evitar fallos de locale
+            let totalProfit = 0, settled = 0, wins = 0, totalStake = 0, todayProfit = 0;
             const todayStr = new Date().toISOString().split('T')[0];
 
             orders.forEach((o, i) => {
@@ -269,17 +259,14 @@
                 else if(o.status === 'loss') { net = -o.st; settled++; }
                 totalProfit += net;
                 totalStake += (o.status !== 'pending' ? o.st : 0);
-                
-                if(o.dateISO === todayStr) {
-                    todayProfit += net;
-                }
+                if(o.dateISO === todayStr) todayProfit += net;
 
                 const row = document.createElement('tr');
                 row.className = "hover:bg-slate-50 transition-colors";
                 row.innerHTML = `
                     <td class="p-4">
-                        <p class="font-bold text-xs text-slate-900">${o.ev}</p>
-                        <p class="text-[9px] text-slate-400 italic mt-0.5">${o.note || 'Sin observaciones'}</p>
+                        <p class="font-bold text-xs text-slate-900 uppercase">${o.ev}</p>
+                        <p class="text-[9px] text-slate-400 italic mt-0.5">${o.note || 'Sin observación'}</p>
                     </td>
                     <td class="p-4 text-center font-mono text-xs text-slate-500">S/ ${o.st.toFixed(2)}</td>
                     <td class="p-4 text-center font-mono text-xs text-slate-400 font-bold">x${o.odd.toFixed(2)}</td>
@@ -295,8 +282,6 @@
 
             const currentBalance = capital + totalProfit;
             const targetDaily = monthlyGoal / 30;
-            
-            // Lógica de Meta Dinámica
             let effectiveTarget = forceUnlock ? targetDaily * 2 : targetDaily;
             let remainingDaily = Math.max(0, effectiveTarget - todayProfit);
             
@@ -318,7 +303,6 @@
                 dailyLabel.className = "text-[8px] font-black text-green-600 uppercase mb-1 tracking-widest";
                 dailyVal.className = "text-xl font-black text-green-600 font-mono";
             }
-            
             dailyVal.innerText = `S/ ${remainingDaily.toFixed(2)}`;
             
             const perc = Math.max(0, Math.min((totalProfit / monthlyGoal) * 100, 100));
@@ -328,31 +312,27 @@
             document.getElementById('roi-val').innerText = totalStake > 0 ? `${((totalProfit/totalStake)*100).toFixed(1)}%` : '0.0%';
             document.getElementById('efect-val').innerText = settled > 0 ? `${Math.round((wins/settled)*100)}%` : '0%';
             
-            // PROTOCOLO DE BLOQUEO
             const lock = document.getElementById('goal-lock');
             const statusTag = document.getElementById('status-tag');
-            
             if (todayProfit >= targetDaily && !forceUnlock) {
                 lock.classList.add('active-lock');
                 statusTag.innerText = "META CUMPLIDA";
                 statusTag.className = "text-base font-bold text-green-600 uppercase";
             } else {
                 lock.classList.remove('active-lock');
-                statusTag.innerText = forceUnlock ? "MODO SOBRE-OPERACIÓN" : "OPERATIVO";
+                statusTag.innerText = forceUnlock ? "MODO BONO X2" : "OPERATIVO";
                 statusTag.className = forceUnlock ? "text-base font-bold text-amber-600 uppercase" : "text-base font-bold text-blue-600 uppercase";
             }
 
-            // IA Mentor
             const mentor = document.getElementById('mentor-msg');
             const stakeAdv = (currentBalance * 0.05).toFixed(2);
             if(todayProfit >= targetDaily && !forceUnlock) {
-                mentor.innerText = `"General, hoy ya capturó S/ ${todayProfit.toFixed(2)}. Meta de S/ ${targetDaily.toFixed(2)} superada. Mi recomendación: Retirada estratégica."`;
+                mentor.innerText = `"General, hoy ya capturó S/ ${todayProfit.toFixed(2)}. Meta superada. Sugiero retirada táctica para proteger ganancias."`;
             } else if (forceUnlock) {
-                mentor.innerText = `"Atención: Modo Bono Activo. Buscando duplicar la meta diaria. Riesgo incrementado, mantenga el rigor."`;
+                mentor.innerText = `"Atención: Modo Bono Activo. Buscando duplicar la meta diaria. Riesgo calculado."`;
             } else {
-                mentor.innerText = `"Fase de Crecimiento activa. Su inversión ideal ahora es S/ ${stakeAdv}. Quedan S/ ${remainingDaily.toFixed(2)} para cerrar el día."`;
+                mentor.innerText = `"Fase de Crecimiento activa. Su inversión ideal ahora es S/ ${stakeAdv}. Radar barriendo el campo."`;
             }
-
             lucide.createIcons();
         }
 
@@ -362,54 +342,29 @@
                   odd = parseFloat(document.getElementById('odd-input').value), 
                   nt = document.getElementById('note-input').value;
             if(!ev || isNaN(st)) return;
-            
-            orders.push({ 
-                ev, st, odd, 
-                status: 'pending', 
-                dateISO: new Date().toISOString().split('T')[0], 
-                note: nt 
-            });
-            
+            orders.push({ ev, st, odd, status: 'pending', dateISO: new Date().toISOString().split('T')[0], note: nt });
             document.getElementById('ev-input').value = ''; 
             document.getElementById('note-input').value = '';
             save(); update(); notify("MISIÓN REGISTRADA");
         }
 
-        function res(i, s) { orders[i].status = s; save(); update(); notify(s === 'win' ? "OBJETIVO NEUTRALIZADO" : "BAJA RECIBIDA"); }
-        
-        function unlockOrder() { 
-            forceUnlock = true; 
-            save();
-            update(); 
-            notify("BÚNKER DESBLOQUEADO - META ACTUALIZADA A BONO X2"); 
-        }
-
+        function res(i, s) { orders[i].status = s; save(); update(); notify(s === 'win' ? "OBJETIVO NEUTRALIZADO" : "BAJA EN EL FRENTE"); }
+        function unlockOrder() { forceUnlock = true; save(); update(); notify("BÚNKER DESBLOQUEADO - META X2"); }
         function editBalance() { 
             const n = prompt("Ajustar Capital Inicial:", capital); if(n) capital = parseFloat(n);
             const g = prompt("Ajustar Meta Mensual:", monthlyGoal); if(g) monthlyGoal = parseFloat(g);
             save(); update(); 
         }
-
-        function resetData() { 
-            if(prompt("Escriba 'FORMATEAR' para borrar todo:") === 'FORMATEAR') { 
-                orders = []; capital = 50.0; forceUnlock = false; save(); update(); notify("SISTEMA RESETEADO"); 
-            } 
-        }
-
+        function resetData() { if(prompt("Escriba 'FORMATEAR' para borrar todo:") === 'FORMATEAR') { orders = []; capital = 50.0; forceUnlock = false; save(); update(); notify("SISTEMA REBOTEADO"); } }
         function notify(m) { 
             const n = document.getElementById('notif'); n.innerText = m; n.style.opacity = '1'; n.style.transform = 'translateY(0) translateX(-50%)'; 
             setTimeout(() => { n.style.opacity = '0'; n.style.transform = 'translateY(10px) translateX(-50%)'; }, 3000); 
         }
 
         window.onload = () => { 
-            // Limpiar forceUnlock al cambiar de día
-            const lastDate = localStorage.getItem('last_active_date');
+            const lastDate = localStorage.getItem('last_active_date_v422');
             const today = new Date().toISOString().split('T')[0];
-            if (lastDate !== today) {
-                forceUnlock = false;
-                localStorage.setItem('last_active_date', today);
-                save();
-            }
+            if (lastDate !== today) { forceUnlock = false; localStorage.setItem('last_active_date_v422', today); save(); }
             lucide.createIcons(); update(); 
         };
     </script>
