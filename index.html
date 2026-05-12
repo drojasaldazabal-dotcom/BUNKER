@@ -3,382 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Búnker de Hierro V2.5 - Business Edition</title>
+    <title>Bünker Business V2.6 - Ultra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #f1f5f9; 
-            color: #0f172a; 
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .fintech-card { 
-            background: #ffffff; 
-            border: 1px solid #e2e8f0; 
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-            border-radius: 1.25rem;
-        }
-
-        .nav-glass {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .progress-track {
-            height: 12px;
-            background: #e2e8f0;
-            border-radius: 999px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #1d4ed8, #3b82f6);
-            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        input {
-            border: 1px solid #cbd5e1 !important;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            border-radius: 0.75rem !important;
-            padding: 0.75rem !important;
-        }
-
-        input:focus {
-            border-color: #3b82f6 !important;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-
-        .status-badge-win { color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; }
-        .status-badge-loss { color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; }
-        
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-slide { animation: slideUp 0.5s ease-out forwards; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; color: #0f172a; }
+        .fintech-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .arc-container { position: relative; width: 280px; height: 140px; }
+        .arc-bg { fill: none; stroke: #e2e8f0; stroke-width: 12; stroke-linecap: round; }
+        .arc-progress { fill: none; stroke: #3b82f6; stroke-width: 12; stroke-linecap: round; transition: stroke-dasharray 1s ease; }
+        .ticker-wrap { width: 100%; overflow: hidden; background: #fff; border-top: 1px solid #e2e8f0; position: fixed; bottom: 0; left: 0; }
+        .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; padding: 10px 0; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        input { border: 1px solid #cbd5e1 !important; border-radius: 0.75rem !important; padding: 0.6rem !important; outline: none; }
+        input:focus { border-color: #3b82f6 !important; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
     </style>
 </head>
-<body class="min-h-screen pb-16">
+<body class="min-h-screen pb-20">
 
-    <!-- BARRA SUPERIOR -->
-    <nav class="nav-glass sticky top-0 z-50 px-6 py-4">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
+    <!-- NAV -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 px-8 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="p-2 bg-blue-700 rounded-xl shadow-lg shadow-blue-200 text-white">
-                    <i data-lucide="bar-chart-big" class="w-5 h-5"></i>
-                </div>
+                <div class="p-2 bg-blue-700 rounded-lg text-white"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></div>
                 <div>
-                    <h1 class="text-lg font-extrabold tracking-tight text-slate-900 uppercase">Búnker <span class="text-blue-600">Business</span></h1>
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Gestión de Capital v2.5</p>
+                    <h1 class="text-lg font-extrabold tracking-tight uppercase">Bünker <span class="text-blue-600">Business</span></h1>
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Gestión de Capital v2.6</p>
                 </div>
             </div>
-            <div class="flex items-center gap-6">
-                <div class="text-right">
-                    <div class="flex items-center justify-end gap-2">
-                        <p id="current-balance-top" class="text-xl font-black text-slate-900 font-mono">S/ 0.00</p>
-                        <button onclick="editBalance('initial')" class="text-slate-300 hover:text-blue-600 transition-colors">
-                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-                    <span class="text-[9px] text-slate-500 font-bold uppercase block -mt-1 tracking-wider">Saldo Operativo</span>
+            <div class="text-right">
+                <div class="flex items-center justify-end gap-2">
+                    <p id="balance-display" class="text-xl font-black font-mono">S/ 50.00</p>
+                    <button onclick="editInitial()" class="text-slate-300 hover:text-blue-600"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
                 </div>
+                <span class="text-[9px] text-slate-400 font-bold uppercase">Saldo Operativo</span>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto p-4 md:p-8 space-y-6">
-
-        <!-- DASHBOARD DE RENDIMIENTO -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 fintech-card p-8 animate-slide">
-                <div class="flex justify-between items-start mb-6">
-                    <div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Progreso de Meta</h2>
-                            <button onclick="editBalance('goal')" class="text-slate-300 hover:text-blue-600 transition-colors">
-                                <i data-lucide="pencil" class="w-3 h-3"></i>
-                            </button>
-                        </div>
-                        <div class="flex items-baseline gap-2">
-                            <p id="profit-label" class="text-5xl font-black text-slate-900 tracking-tighter">S/ 0.00</p>
-                            <span class="text-slate-300 text-lg font-medium tracking-tight">generados</span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Meta: <span id="goal-value-display">S/ 1,000</span></p>
-                        <span class="text-3xl font-black text-blue-600 font-mono" id="goal-percent">0.0%</span>
-                    </div>
-                </div>
-                
-                <div class="progress-track mb-8">
-                    <div id="goal-progress" class="progress-fill" style="width: 0%"></div>
-                </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6 border-t border-slate-100">
-                    <div>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Efectividad</p>
-                        <p id="win-rate" class="text-xl font-bold text-slate-900">0%</p>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">ROI Real</p>
-                        <p id="roi-display" class="text-xl font-bold text-slate-900">0.0%</p>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Fase</p>
-                        <p id="current-phase" class="text-xl font-bold text-blue-700 uppercase tracking-tighter">FASE 1</p>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-green-600 font-bold uppercase mb-1">Meta Diaria</p>
-                        <p id="daily-target" class="text-xl font-bold text-green-600 font-mono">S/ 33.33</p>
+    <main class="max-w-7xl mx-auto p-6 md:p-8 space-y-8">
+        
+        <!-- DASHBOARD SUPERIOR -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            
+            <!-- ARCO DE PROGRESO -->
+            <div class="fintech-card p-8 flex flex-col items-center justify-center lg:col-span-1">
+                <p class="text-[10px] font-black uppercase text-slate-400 mb-4 tracking-widest">Meta: S/ 1,000</p>
+                <div class="arc-container">
+                    <svg viewBox="0 0 200 100" class="w-full">
+                        <path class="arc-bg" d="M 20 90 A 80 80 0 0 1 180 90" />
+                        <path id="arc-progress-bar" class="arc-progress" d="M 20 90 A 80 80 0 0 1 180 90" stroke-dasharray="0, 251.32" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-end pb-2">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Generados</span>
+                        <span id="profit-display" class="text-3xl font-black tracking-tighter">S/ 0.00</span>
+                        <span id="percent-display" class="text-sm font-bold text-blue-600 font-mono mt-1">0.0% PROGRESS</span>
                     </div>
                 </div>
             </div>
 
-            <!-- CUADRO DE ASESORÍA -->
-            <div class="fintech-card p-8 bg-blue-700 text-white border-none flex flex-col justify-center relative overflow-hidden animate-slide">
-                <div class="absolute -right-6 -bottom-6 opacity-10">
-                    <i data-lucide="briefcase" class="w-48 h-48"></i>
+            <!-- MÉTRICAS Y INSIGHTS -->
+            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="fintech-card p-4 flex justify-between items-center">
+                        <div><p class="text-[9px] font-black text-slate-400 uppercase">ROI Real</p><p id="roi-val" class="text-xl font-black">0.0%</p></div>
+                        <div class="p-2 bg-green-50 rounded-lg text-green-600"><i data-lucide="trending-up" class="w-5 h-5"></i></div>
+                    </div>
+                    <div class="fintech-card p-4 flex justify-between items-center">
+                        <div><p class="text-[9px] font-black text-slate-400 uppercase">Efectividad</p><p id="efect-val" class="text-xl font-black">0%</p></div>
+                        <div class="p-2 bg-red-50 rounded-lg text-red-600"><i data-lucide="target" class="w-5 h-5"></i></div>
+                    </div>
+                    <div class="fintech-card p-4 flex justify-between items-center">
+                        <div><p class="text-[9px] font-black text-slate-400 uppercase">Meta Diaria</p><p class="text-xl font-black text-green-600 font-mono">S/ 33.33</p></div>
+                        <div class="p-2 bg-slate-50 rounded-lg text-slate-600"><i data-lucide="calendar" class="w-5 h-5"></i></div>
+                    </div>
+                    <div class="fintech-card p-4 flex justify-between items-center">
+                        <div><p class="text-[9px] font-black text-slate-400 uppercase">Fase</p><p id="phase-val" class="text-xl font-black text-blue-600">FASE 1</p></div>
+                        <div class="p-2 bg-blue-50 rounded-lg text-blue-600"><i data-lucide="layers" class="w-5 h-5"></i></div>
+                    </div>
                 </div>
-                <h3 class="text-blue-200 text-[10px] font-black uppercase tracking-[0.3em] mb-4">Recomendación Ejecutiva</h3>
-                <p id="didactic-msg" class="text-lg font-medium leading-snug relative z-10 italic">
-                    "General, defina su capital operativo inicial para recibir el cálculo de stake profesional."
-                </p>
+
+                <!-- IA INSIGHTS -->
+                <div class="fintech-card p-6 bg-white relative overflow-hidden border-2 border-blue-100 shadow-xl shadow-blue-900/5">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white"><i data-lucide="user" class="w-4 h-4"></i></div>
+                        <h3 class="font-black text-xs uppercase tracking-widest">IA Insights</h3>
+                    </div>
+                    <p id="insight-text" class="text-sm leading-relaxed text-slate-600 italic">
+                        Recomendación: Fase de Reclutamiento. Con S/ 50.00 de capital, su stake ideal es de S/ 2.50 (5%). No se sobre-exponga.
+                    </p>
+                    <div class="absolute -right-4 -bottom-4 opacity-5"><i data-lucide="message-square" class="w-24 h-24"></i></div>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            
-            <!-- REGISTRO DE MOVIMIENTO -->
-            <div class="lg:col-span-1">
-                <div class="fintech-card p-6 sticky top-28 animate-slide">
-                    <h3 class="font-bold text-sm text-slate-900 uppercase tracking-widest mb-6 border-b border-slate-100 pb-3">Nueva Orden</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block tracking-widest">Evento / Mercado</label>
-                            <input type="text" id="bet-event" placeholder="Ej. Liverpool vs Arsenal" class="w-full text-sm">
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block tracking-widest">Stake (S/)</label>
-                                <input type="number" id="bet-stake" value="2.50" step="0.5" class="w-full font-mono text-sm">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block tracking-widest">Cuota</label>
-                                <input type="number" id="bet-odds" value="1.50" step="0.05" class="w-full font-mono text-sm">
-                            </div>
-                        </div>
-                        <button onclick="addBet()" class="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-xl font-bold text-xs uppercase tracking-[0.2em] transition-all shadow-lg active:scale-95 mt-2">
-                            Ejecutar Orden
-                        </button>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- FORMULARIO -->
+            <div class="lg:col-span-1 fintech-card p-6">
+                <h3 class="font-black text-sm uppercase tracking-widest mb-6">Nueva Orden</h3>
+                <div class="space-y-4">
+                    <div><label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Evento / Mercado</label><input type="text" id="ev" placeholder="Ej. Liverpool vs Arsenal" class="w-full text-sm"></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Stake (S/)</label><input type="number" id="st" value="2.50" step="0.5" class="w-full font-mono text-sm"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Cuota</label><input type="number" id="odd" value="1.50" step="0.05" class="w-full font-mono text-sm"></div>
                     </div>
+                    <button onclick="addOrder()" class="w-full bg-slate-950 hover:bg-black text-white py-4 rounded-xl font-bold text-xs uppercase tracking-[0.2em] transition-all shadow-lg active:scale-95">Ejecutar Orden</button>
+                    <p class="text-[9px] text-center text-slate-400 font-bold uppercase cursor-help hover:text-blue-600 underline">Ver Mercados Recomendados</p>
                 </div>
             </div>
 
-            <!-- LIBRO DE OPERACIONES -->
-            <div class="lg:col-span-3">
-                <div class="fintech-card overflow-hidden animate-slide">
-                    <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                        <h3 class="font-bold text-[10px] text-slate-400 uppercase tracking-widest">Registro Táctico de Operaciones</h3>
-                        <button onclick="resetData()" class="text-[9px] font-bold text-slate-300 hover:text-red-500 transition-all flex items-center gap-1.5 uppercase">
-                            <i data-lucide="refresh-cw" class="w-3 h-3"></i> Formatear Búnker
-                        </button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead class="text-[10px] text-slate-400 uppercase tracking-widest bg-slate-50/30 border-b border-slate-100">
-                                <tr>
-                                    <th class="p-5">Detalle Operación</th>
-                                    <th class="p-5 text-center">Stake</th>
-                                    <th class="p-5 text-center">Cuota</th>
-                                    <th class="p-5 text-center">Estado</th>
-                                    <th class="p-5 text-right font-bold">Ganancia (S/)</th>
-                                    <th class="p-5"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="bets-table-body" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                        <div id="empty-state" class="p-24 text-center">
-                            <div class="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-200">
-                                <i data-lucide="folder-search" class="w-7 h-7 text-slate-300"></i>
-                            </div>
-                            <p class="text-sm font-medium text-slate-400 uppercase tracking-widest">Sin misiones en el radar</p>
-                        </div>
+            <!-- REGISTRO TÁCTICO -->
+            <div class="lg:col-span-3 fintech-card overflow-hidden">
+                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <h3 class="font-bold text-[10px] text-slate-400 uppercase tracking-widest">Registro Táctico de Operaciones</h3>
+                    <button onclick="resetSystem()" class="text-[9px] font-bold text-slate-300 hover:text-red-500 flex items-center gap-1.5"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Formatear Bünker</button>
+                </div>
+                <div class="overflow-x-auto min-h-[300px]">
+                    <table class="w-full text-left">
+                        <thead class="text-[10px] text-slate-400 uppercase tracking-widest bg-slate-50/30 border-b border-slate-100">
+                            <tr>
+                                <th class="p-5">Detalle Operación</th>
+                                <th class="p-5">Mercado</th>
+                                <th class="p-5 text-center">Stake</th>
+                                <th class="p-5 text-center">Cuota</th>
+                                <th class="p-5 text-center">Estado</th>
+                                <th class="p-5 text-right font-bold">Ganancia (S/)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                    <div id="empty" class="p-20 text-center flex flex-col items-center">
+                        <div class="bg-slate-50 p-4 rounded-full mb-4"><i data-lucide="folder-search" class="w-8 h-8 text-slate-200"></i></div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Registro Táctico Vacío</p>
+                        <p class="text-[10px] text-slate-300 mt-2 uppercase">Buscando próximas misiones...</p>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- NOTIFICACIONES -->
-    <div id="notification" class="fixed bottom-8 right-8 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl transform translate-y-32 opacity-0 transition-all duration-500 z-50 font-bold text-xs flex items-center gap-3">
-        <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-400"></i>
-        <span id="notification-text"></span>
+    <!-- TICKER -->
+    <div class="ticker-wrap">
+        <div class="ticker" id="ticker-content">
+            <span class="mx-8 font-bold text-[10px] uppercase text-slate-500 italic flex items-center gap-2"><i data-lucide="circle" class="w-2 h-2 fill-green-500 text-green-500"></i> UCL: Man City vs Real Madrid (Pre-match Analysis)</span>
+            <span class="mx-8 font-bold text-[10px] uppercase text-slate-500 italic flex items-center gap-2"><i data-lucide="circle" class="w-2 h-2 fill-green-500 text-green-500"></i> Premier League: Arsenal vs Man Utd (Live Data Ready)</span>
+            <span class="mx-8 font-bold text-[10px] uppercase text-slate-500 italic flex items-center gap-2"><i data-lucide="circle" class="w-2 h-2 fill-green-500 text-green-500"></i> Metodo 85%: Radar Activo</span>
+        </div>
     </div>
 
     <script>
-        // SISTEMA DE ALMACENAMIENTO (LOCALSTORAGE)
-        let bets = JSON.parse(localStorage.getItem('bunker_business_v2_5_bets')) || [];
-        let initialBalance = parseFloat(localStorage.getItem('bunker_business_v2_5_initial')) || 50.00;
-        let monthlyGoal = parseFloat(localStorage.getItem('bunker_business_v2_5_goal')) || 1000.00;
+        let orders = JSON.parse(localStorage.getItem('bk_v2_6_orders')) || [];
+        let initial = parseFloat(localStorage.getItem('bk_v2_6_initial')) || 50.00;
+        const goal = 1000.00;
 
         function save() {
-            localStorage.setItem('bunker_business_v2_5_bets', JSON.stringify(bets));
-            localStorage.setItem('bunker_business_v2_5_initial', initialBalance.toString());
-            localStorage.setItem('bunker_business_v2_5_goal', monthlyGoal.toString());
+            localStorage.setItem('bk_v2_6_orders', JSON.stringify(orders));
+            localStorage.setItem('bk_v2_6_initial', initial.toString());
         }
 
-        // FUNCIONES DE EDICIÓN MANUAL
-        function editBalance(type) {
-            if (type === 'initial') {
-                const newVal = prompt("Ajustar Saldo Operativo Inicial (S/):", initialBalance);
-                if (newVal !== null && !isNaN(parseFloat(newVal))) {
-                    initialBalance = parseFloat(newVal);
-                    notify("SALDO INICIAL ACTUALIZADO");
-                }
-            } else if (type === 'goal') {
-                const newVal = prompt("Definir Meta Mensual (S/):", monthlyGoal);
-                if (newVal !== null && !isNaN(parseFloat(newVal))) {
-                    monthlyGoal = parseFloat(newVal);
-                    notify("META MENSUAL ACTUALIZADA");
-                }
-            }
-            save();
-            updateUI();
-        }
-
-        function updateUI() {
-            const tableBody = document.getElementById('bets-table-body');
-            const emptyState = document.getElementById('empty-state');
-            tableBody.innerHTML = '';
+        function update() {
+            const body = document.getElementById('table-body');
+            const empty = document.getElementById('empty');
+            body.innerHTML = '';
             
-            if (bets.length === 0) emptyState.style.display = 'block';
-            else emptyState.style.display = 'none';
+            let totalProfit = 0, wins = 0, settled = 0, wagered = 0;
 
-            let totalProfit = 0;
-            let wins = 0;
-            let settledBets = 0;
-            let totalWagered = 0;
-
-            bets.forEach((bet, index) => {
-                let netResult = 0;
-                if (bet.status === 'win') { netResult = bet.stake * (bet.odds - 1); wins++; settledBets++; }
-                else if (bet.status === 'loss') { netResult = -bet.stake; settledBets++; }
-                totalProfit += netResult;
-                totalWagered += (bet.status !== 'pending' ? bet.stake : 0);
+            orders.forEach((o, i) => {
+                let res = 0;
+                if(o.status === 'win') { res = o.st * (o.odd - 1); wins++; settled++; }
+                else if(o.status === 'loss') { res = -o.st; settled++; }
+                totalProfit += res;
+                wagered += (o.status !== 'pending' ? o.st : 0);
 
                 const row = document.createElement('tr');
-                row.className = 'hover:bg-slate-50 transition-colors duration-200';
+                row.className = 'hover:bg-slate-50 transition-colors text-xs';
                 row.innerHTML = `
-                    <td class="p-5">
-                        <p class="font-extrabold text-slate-900 tracking-tight">${bet.event}</p>
-                        <p class="text-[9px] text-slate-400 font-bold uppercase mt-1 tracking-wider">${bet.date}</p>
-                    </td>
-                    <td class="p-5 text-center font-mono text-sm text-slate-600">S/ ${bet.stake.toFixed(2)}</td>
-                    <td class="p-5 text-center font-mono text-sm text-slate-300 font-bold">x${bet.odds.toFixed(2)}</td>
+                    <td class="p-5 font-bold">${o.ev}</td>
+                    <td class="p-5 text-slate-400 font-medium">${o.mkt || 'Under/Over/Asiatico'}</td>
+                    <td class="p-5 text-center font-mono">S/ ${o.st.toFixed(2)}</td>
+                    <td class="p-5 text-center font-mono text-slate-300">x${o.odd.toFixed(2)}</td>
                     <td class="p-5 text-center">
-                        ${bet.status === 'pending' ? 
-                            `<div class="flex gap-2 justify-center">
-                                <button onclick="setResult(${index}, 'win')" class="bg-blue-700 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase shadow-md hover:bg-blue-800 transition-all">WIN</button>
-                                <button onclick="setResult(${index}, 'loss')" class="bg-slate-200 text-slate-500 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase hover:bg-slate-300 transition-all">LOSS</button>
-                            </div>` : 
-                            `<span class="px-3 py-1.5 rounded-lg text-[9px] font-black uppercase ${bet.status === 'win' ? 'status-badge-win' : 'status-badge-loss'}">${bet.status === 'win' ? 'Éxito' : 'Baja'}</span>`
+                        ${o.status === 'pending' ? 
+                            `<div class="flex gap-1 justify-center"><button onclick="setRes(${i},'win')" class="bg-blue-600 text-white px-2 py-1 rounded text-[9px] font-black uppercase">WIN</button><button onclick="setRes(${i},'loss')" class="bg-slate-200 text-slate-500 px-2 py-1 rounded text-[9px] font-black uppercase">LOSS</button></div>` : 
+                            `<span class="px-2 py-1 rounded text-[9px] font-black uppercase ${o.status === 'win' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${o.status}</span>`
                         }
                     </td>
-                    <td class="p-5 text-right font-black font-mono text-sm ${netResult >= 0 ? 'text-green-600' : 'text-red-600'}">
-                        ${bet.status === 'pending' ? '--' : (netResult > 0 ? '+' : '') + netResult.toFixed(2)}
-                    </td>
-                    <td class="p-5 text-right">
-                        <button onclick="deleteBet(${index})" class="text-slate-200 hover:text-red-500 transition-colors">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </td>
+                    <td class="p-5 text-right font-black font-mono ${res >= 0 ? 'text-green-600' : 'text-red-600'}">${o.status === 'pending' ? '--' : (res > 0 ? '+' : '') + res.toFixed(2)}</td>
                 `;
-                tableBody.prepend(row);
+                body.prepend(row);
             });
 
-            const currentTotalBalance = initialBalance + totalProfit;
-            document.getElementById('current-balance-top').innerText = `S/ ${currentTotalBalance.toFixed(2)}`;
-            document.getElementById('profit-label').innerText = `S/ ${totalProfit.toFixed(2)}`;
-            document.getElementById('goal-value-display').innerText = `S/ ${monthlyGoal.toLocaleString()}`;
+            empty.style.display = orders.length === 0 ? 'flex' : 'none';
+            const bal = initial + totalProfit;
+            document.getElementById('balance-display').innerText = `S/ ${bal.toFixed(2)}`;
+            document.getElementById('profit-display').innerText = `S/ ${totalProfit.toFixed(2)}`;
             
-            document.getElementById('win-rate').innerText = settledBets > 0 ? `${Math.round((wins / settledBets) * 100)}%` : '0%';
-            document.getElementById('roi-display').innerText = totalWagered > 0 ? `${((totalProfit / totalWagered) * 100).toFixed(1)}%` : '0.0%';
+            const perc = Math.max(0, Math.min((totalProfit / goal) * 100, 100));
+            document.getElementById('percent-display').innerText = `${perc.toFixed(1)}% PROGRESS`;
+            document.getElementById('arc-progress-bar').style.strokeDasharray = `${(perc / 100) * 251.32}, 251.32`;
             
-            const p = Math.max(0, Math.min((totalProfit / monthlyGoal) * 100, 100)).toFixed(1);
-            document.getElementById('goal-percent').innerText = `${p}%`;
-            document.getElementById('goal-progress').style.width = `${p}%`;
+            document.getElementById('roi-val').innerText = wagered > 0 ? `${((totalProfit / wagered) * 100).toFixed(1)}%` : '0.0%';
+            document.getElementById('efect-val').innerText = settled > 0 ? `${Math.round((wins / settled) * 100)}%` : '0%';
             
-            const dailyTargetValue = (monthlyGoal / 30).toFixed(2);
-            document.getElementById('daily-target').innerText = `S/ ${dailyTargetValue}`;
-
-            // ASESOR DE FASES
-            const msg = document.getElementById('didactic-msg');
-            const phase = document.getElementById('current-phase');
-            if(currentTotalBalance < (initialBalance + (monthlyGoal * 0.2))) {
-                phase.innerText = "FASE 1";
-                phase.style.color = "#1d4ed8";
-                msg.innerText = `"Fase de Reclutamiento. Con S/ ${currentTotalBalance.toFixed(2)} de capital, su stake ideal es de S/ ${(currentTotalBalance * 0.05).toFixed(2)} (5%). No se sobre-exponga."`;
-            } else {
-                phase.innerText = "FASE 2";
-                phase.style.color = "#059669";
-                msg.innerText = `"Fase de Crecimiento. El búnker es estable. Mantenga el ROI positivo y ejecute solo misiones de jerarquía."`;
-            }
+            const insight = document.getElementById('insight-text');
+            const ph = document.getElementById('phase-val');
+            if(bal < initial + 150) { ph.innerText = "FASE 1"; insight.innerText = `Recomendación: Fase de Reclutamiento. Con S/ ${bal.toFixed(2)} de capital, su stake ideal es de S/ ${(bal * 0.05).toFixed(2)} (5%). No se sobre-exponga.`; }
+            else { ph.innerText = "FASE 2"; insight.innerText = "Estrategia: Crecimiento consolidado. Mantenga la disciplina táctica."; }
             lucide.createIcons();
         }
 
-        function addBet() {
-            const event = document.getElementById('bet-event').value;
-            const stake = parseFloat(document.getElementById('bet-stake').value);
-            const odds = parseFloat(document.getElementById('bet-odds').value);
-            if (!event || isNaN(stake) || stake <= 0) { notify("ERROR EN DATOS DE ORDEN"); return; }
-            const now = new Date();
-            const dateStr = now.toLocaleDateString() + ' ' + now.getHours() + ':' + (now.getMinutes()<10?'0':'') + now.getMinutes();
-            bets.push({ event, stake, odds, status: 'pending', date: dateStr });
-            document.getElementById('bet-event').value = '';
-            save(); updateUI();
-            notify("ORDEN REGISTRADA");
+        function addOrder() {
+            const ev = document.getElementById('ev').value, st = parseFloat(document.getElementById('st').value), odd = parseFloat(document.getElementById('odd').value);
+            if(!ev || isNaN(st)) return;
+            orders.push({ ev, st, odd, status: 'pending', date: new Date().toLocaleDateString() });
+            document.getElementById('ev').value = ''; save(); update();
         }
 
-        function deleteBet(index) {
-            if(confirm("¿Eliminar registro del libro táctico?")) {
-                bets.splice(index, 1);
-                save(); updateUI();
-                notify("REGISTRO ELIMINADO");
-            }
-        }
+        function setRes(i, s) { orders[i].status = s; save(); update(); }
+        function editInitial() { const n = prompt("Nuevo Capital:", initial); if(n) { initial = parseFloat(n); save(); update(); } }
+        function resetSystem() { if(confirm("¿Formatear Bünker?")) { orders = []; initial = 50.0; save(); update(); } }
 
-        function setResult(index, status) { 
-            bets[index].status = status; 
-            save(); updateUI(); 
-            notify(status === 'win' ? "MISIÓN EXITOSA" : "REPORTE DE BAJA"); 
-        }
-
-        function resetData() { 
-            if(confirm("ADVERTENCIA: ¿Borrar historial completo y reiniciar capital?")) { 
-                bets = []; 
-                initialBalance = 50.00;
-                monthlyGoal = 1000.00;
-                save(); updateUI(); 
-                notify("SISTEMA FORMATEADO"); 
-            } 
-        }
-
-        function notify(t) { 
-            const n = document.getElementById('notification'); 
-            document.getElementById('notification-text').innerText = t;
-            n.classList.remove('translate-y-32', 'opacity-0'); 
-            n.classList.add('translate-y-0', 'opacity-100'); 
-            setTimeout(() => { 
-                n.classList.add('translate-y-32', 'opacity-0'); 
-                n.classList.remove('translate-y-0', 'opacity-100'); 
-            }, 3000); 
-        }
-
-        window.onload = () => { lucide.createIcons(); updateUI(); };
+        window.onload = () => { lucide.createIcons(); update(); };
     </script>
 </body>
 </html>
